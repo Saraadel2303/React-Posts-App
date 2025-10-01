@@ -3,7 +3,7 @@ function App() {
 
   return (
     <>
-      hhhhhhhaaaaaa
+      <h1 className="text-9xl">hiii</h1>
     </>
   )
 }
