@@ -3,6 +3,31 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 
+function ProfileImage({ src, alt }) {
+  const [loading, setLoading] = useState(true);
+
+  return (
+    <div className="relative w-12 h-12">
+      {loading && (
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse rounded-full border-2 border-pink-300 shadow-md"></div>
+      )}
+
+      <img
+        src={src || "/profile.jpg"}
+        alt={alt || "avatar"}
+        onLoad={() => setLoading(false)}
+        onError={(e) => {
+          e.target.src = "/profile.jpg";
+          setLoading(false);
+        }}
+        className={`w-12 h-12 object-cover rounded-full border-2 border-pink-400 shadow-lg transition-all duration-300 ${
+          loading ? "opacity-0" : "opacity-100 hover:scale-105"
+        }`}
+      />
+    </div>
+  );
+}
+
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -14,11 +39,16 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gradient-to-r from-purple-200 via-pink-100 to-purple-200 p-3 shadow-md">
-      <div className="flex justify-between items-center mx-10">
+    <nav className="bg-gradient-to-r from-purple-200 via-pink-100 to-purple-200 p-2 shadow-md">
+      <div className="flex justify-between items-center mx-8">
+        {/* Logo */}
         <div className="flex items-center">
-          <span className="text-5xl font-extrabold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">P</span>
-          <span className="text-2xl font-bold text-purple-700 ml-1">ostify</span>
+          <span className="text-5xl font-extrabold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+            P
+          </span>
+          <span className="text-2xl font-bold text-purple-700 ml-1">
+            ostify
+          </span>
         </div>
 
         <div className="space-x-4 flex items-center">
@@ -28,12 +58,11 @@ export default function Navbar() {
                 className="flex flex-col items-center cursor-pointer"
                 onClick={() => setMenuOpen(!menuOpen)}
               >
-                <img
-                  src={user.photo || "/icon.jpg"}
-                  alt="avatar"
-                  className="w-12 h-12 rounded-full border-2 border-pink-400 shadow-lg hover:scale-105 transition-transform duration-300"
-                />
-                <span className="text-sm font-semibold text-purple-800 mt-1">{user.name}</span>
+                <ProfileImage src={user.photo} alt={user.name} />
+
+                <span className="text-sm font-semibold text-purple-800 mt-1">
+                  {user.name}
+                </span>
               </div>
 
               {menuOpen && (

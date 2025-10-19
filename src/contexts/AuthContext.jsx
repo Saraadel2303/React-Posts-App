@@ -45,33 +45,46 @@ export const AuthProvider = ({ children }) => {
   };
 
   const getProfile = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token);
+  try {
+    const token = localStorage.getItem("token");
+    console.log("Token from localStorage:", token);
 
-      if (!token) {
-        return { ok: false, message: "No token found" };
-      }
-
-      const res = await axios.get(
-        "https://linked-posts.routemisr.com/users/profile-data",
-        {
-          headers: { token },
-        }
-      );
-
-      setUser({ ...res.data.user, token });
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      return { ok: true, data: res.data.user };
-    } catch (err) {
-      console.error("❌ getProfile error:", err.response?.data || err.message);
-      return {
-        ok: false,
-        message: err.response?.data?.message || "Failed to fetch profile",
-      };
+    if (!token) {
+      return { ok: false, message: "No token found" };
     }
-  };
+
+    const res = await axios.get(
+      "https://linked-posts.routemisr.com/users/profile-data",
+      {
+        headers: { token },
+      }
+    );
+
+    const userData = res.data.user;
+
+    const updatedUser = {
+      ...userData,
+      token,
+      photo:
+        userData.gender === "female"
+          ? "/profile.jpg"
+          : "/maleAvatar.png",
+    };
+
+
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+
+    return { ok: true, data: updatedUser };
+  } catch (err) {
+    console.error("❌ getProfile error:", err.response?.data || err.message);
+    return {
+      ok: false,
+      message: err.response?.data?.message || "Failed to fetch profile",
+    };
+  }
+};
+
 
   const login = async (data) => {
     try {
